@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"
+        ></script>
+        <title>Jquery xml</title>
+    </head>
+    <body>
+        <script>
+            let xml = new XMLHttpRequest();
+            xml.open('GET', 'data.xsl', false);
+            xml.send(null);
+
+            let xsl = new DOMParser().parseFromString(
+                xml.responseText,
+                'text/xml'
+            );
+            let xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(xsl);
+
+            let xmlData = new XMLHttpRequest();
+            xmlData.open('GET', 'data.xml', false);
+
+            xmlData.send(null);
+            let resultDocument = xsltProcessor.transformToFragment(
+                xmlData.responseXML,
+                document
+            );
+
+            $('body').append(resultDocument);
+
+            $('tbody tr').each((i, tr) => {
+                $(tr).on('click', (e) => {
+                    let lastTdOfTr = e.currentTarget.lastElementChild;
+                    let addressTd = lastTdOfTr.previousElementSibling;
+                    let whiteSpace = lastTdOfTr.style.whiteSpace;
+                    whiteSpace = whiteSpace === 'unset' ? 'nowrap' : 'unset';
+                    lastTdOfTr.style.whiteSpace = whiteSpace;
+                    addressTd.style.whiteSpace = whiteSpace;
+                });
+            });
+        </script>
+    </body>
+
+    <!-- <script type="module" src="main.js"></script> -->
+</html>
